@@ -1,0 +1,18 @@
+# Base
+fastapi==0.79.0
+uvicorn[standard]==0.17.6
+ujson==5.4.0
+agentpy
+python-jose==3.3.0
+python-multipart
+typer[all]
+
+seaborn
+
+# Development
+black==22.6.0
+isort==5.10.1
+pytest==6.2.5
+pytest-asyncio==0.19.0
+requests==2.28.1
+httpx==0.23.0

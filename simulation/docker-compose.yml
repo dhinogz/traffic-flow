@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+
+  web:
+    container_name: multiagent-test
+    build:
+      context: .
+    command: python server.py
+    volumes:
+      - ./test-agent:/usr/src/test-agent
+    ports:
+      - 8000:8000
