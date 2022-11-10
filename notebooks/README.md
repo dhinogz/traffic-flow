@@ -23,3 +23,6 @@ $ .venv\Scripts\activate.bat
 ```
 (.venv) $ python -m pip install -r requirements.txt
 ```
+
+More info
+https://docs.python.org/3/tutorial/venv.html
