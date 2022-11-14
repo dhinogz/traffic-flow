@@ -3,11 +3,11 @@ version: '3.9'
 services:
 
   web:
-    container_name: multiagent-test
+    container_name: traffic_flow
     build:
       context: .
     command: python server.py
     volumes:
-      - ./test-agent:/usr/src/test-agent
+      - ./traffic_flow:/usr/src/traffic_flow
     ports:
       - 8000:8000

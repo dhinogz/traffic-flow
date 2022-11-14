@@ -2,7 +2,7 @@
 FROM python:3.10
 
 # set working directory
-WORKDIR /usr/src/test-agent
+WORKDIR /usr/src/traffic_flow
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -14,7 +14,7 @@ RUN apt-get update \
     && apt-get clean
 
 # add app
-COPY test-agent/ .
+COPY traffic_flow/ .
 
 # install python dependencies
 RUN pip install --upgrade pip
