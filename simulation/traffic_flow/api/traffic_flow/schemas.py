@@ -36,8 +36,6 @@ class TrafficParams(BaseModel):
     problem_intensity: int
     density: int
     density_merge: int
-    cars_pos: list[CarPositionCreate]
-    cars_pos_merge: list[CarPositionCreate]
 
     class Config:
         schema_extra = {
