@@ -1,8 +1,7 @@
 import numpy as np
 
-from .schemas import StepRead, TrafficParams
+from .schemas import CarRead, TrafficParams
 
-from models.traffic_flow import TrafficFlowModel
 
 
 def normalization(v):
@@ -12,11 +11,12 @@ def normalization(v):
     return v / norm
 
 
-def parse_model_results(results) -> list[StepRead]:
+def parse_model_results(results) -> list[CarRead]:
     pass
 
 
-def run_model(traffic_params: TrafficParams) -> list[StepRead]:
+def run_model(traffic_params: TrafficParams) -> list[CarRead]:
+    from models.traffic_flow import TrafficFlowModel
 
     model = TrafficFlowModel(traffic_params)
 

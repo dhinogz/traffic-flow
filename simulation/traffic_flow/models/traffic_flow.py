@@ -3,234 +3,542 @@ import numpy as np
 
 from api.traffic_flow.services import normalization
 
-
 class Car(ap.Agent):
-    """ An agent with a position and velocity in a continuous space,
-    who follows Craig Reynolds three rules of flocking behavior;
-    plus a fourth rule to avoid the edges of the simulation space. """
 
+    # Agente de la autopista
     def setup(self):
 
+        #Velocidad inicial con movimiento a X positiva
         self.velocity =  [1.0, 0.000] 
-        self.acceleration = [0 , 0]          
-        self.close_car = False
+
+        #Revision aleatoria para la generacion de error de velocidad
         self.random = self.model.random
         self.group = self.random.choice(range(100))
-        print(self.group)
-        if self.group < self.p.problems:
-            self.error = ((self.random.choice(range(self.p.problem_intensity))-self.p.problem_intensity/2)/self.p.problem_intensity)
+        if self.group < self.p.problemas:
+            self.error = ((self.random.choice(range(self.p.intensidad_problemas))-self.p.intensidad_problemas/2)/self.p.intensidad_problemas)
         else:
             self.error = 0
-        print(self.error)    
+
+        #Declaracion de que el agente no es de la incorporacion
+        self.isIncor = False
 
     def setup_pos(self, space):
-
+        
+        #Iniciacion en las posiciones iniciales
         self.space = space
         self.neighbors = space.neighbors
         self.pos = space.positions[self]
         
-    def update_velocity(self):
+    def update_velocity(self, velocidadFuzzy):
+
+        #Metodo para la declaracion de velocidad
+
+        #Simplificacion de variable de posicion
 
         pos = self.pos
-        ndim = self.p.ndim
 
-        nbs = self.neighbors(self, distance=self.p.outer_radius)
-        nbs_len = 0
-        nbs_pos_array = np.array(nbs.pos)
-        v1 = np.zeros(ndim)
-        for nbs_check in nbs_pos_array:
-            if (nbs_check[0] -  pos[0]  > -1 and nbs_check[0] -  pos[0]  < self.p.outer_radius ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
-                nbs_len += 1
-        nbs_vec_array = np.array(nbs.velocity)
-        if nbs_len > 0:
-            if self.velocity[0] > 0.0:
-                self.velocity =   [0, 0]   
-            else:
-                v1 = np.zeros(ndim)
-        else:
-            if self.velocity[0] < 1.0:
-                v1 = np.array([1, 0.])
-            else:
-                v1 = np.zeros(ndim)
+        #Revision de si esta por salirse del mapa
 
-        
-    
-        self.velocity += v1
-        self.velocity = normalization(self.velocity)+normalization(self.velocity)*self.error
         if pos[0] > 99:
+
+            #Si si, continuar con velocidad constante
+
             self.velocity = [1,0]
-
-    def update_position(self):
-
-        self.space.move_by(self, self.velocity)
-
-
-    def remove_agent(self):
-        """ Removes agents from the space. """
-        
-        #if self.pos[0] > 90:
-    
-class CarIncor(ap.Agent):
-    """ An agent with a position and velocity in a continuous space,
-    who follows Craig Reynolds three rules of flocking behavior;
-    plus a fourth rule to avoid the edges of the simulation space. """
-
-    def setup(self):
-
-        self.velocity =  [1.0, 0.1] 
-        self.acceleration = [0 , 0]          
-        self.car_incor = False
-        self.random = self.model.random
-        self.group = self.random.choice(range(100))
-        print(self.group)
-        if self.group < self.p.problems:
-            self.error = ((self.random.choice(range(self.p.problem_intensity))-self.p.problem_intensity/2)/self.p.problem_intensity)
         else:
-            self.error = 0
-        print(self.error)    
 
-    def setup_pos(self, space):
+            #Si no, iniciar proceso de toma de decision de velocidad
 
-        self.space = space
-        self.neighbors = space.neighbors
-        self.pos = space.positions[self]
-        
-    def update_velocity(self):
+            #Simplificacion de variable del parametro de numero de dimensiones
 
-        pos = self.pos
-        ndim = self.p.ndim
+            ndim = self.p.ndim
 
-        
+            #Revision de agentes dentro del radio "outer_radiusX"
 
-        nbs = self.neighbors(self, distance=self.p.outer_radius)
-        nbs_len = 0
-        nbs_pos_array = np.array(nbs.pos)
-        for nbs_check in nbs_pos_array:
-            if pos[1] >= 5.0:
-                if (nbs_check[0] -  pos[0]  > 0 and nbs_check[0] -  pos[0]  < self.p.outer_radius ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
+            nbs = self.neighbors(self, distance=self.p.outer_radiusX)
+
+            # Inicializacion de variable para contar vecinos
+
+            nbs_len = 0
+
+            #Extraccion de todas las posiciones d elos vecinos
+
+            nbs_pos_array = np.array(nbs.pos)
+
+            #Declaracion de v1 como un vector de 0s de ndim dimensiones
+
+            v1 = np.zeros(ndim)
+
+            #Corrimiento de todos los agentes que son vecinos en su radio para revisar cuales estan enfrente
+            
+            for nbs_check in nbs_pos_array:
+                if (nbs_check[0] -  pos[0]  > -0.5 and nbs_check[0] -  pos[0]  < self.p.outer_radiusX ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
+
+                    #Si si estan, agregar 1 al contador de vecinos
+
                     nbs_len += 1
-            else:
-                if (nbs_check[0] -  pos[0]  > 1 and nbs_check[0] -  pos[0]  < self.p.inner_radius*0.5 ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
-                    nbs_len += 1
-
-        #nbs_vec_array = np.array(nbs.velocity)
-        v1 = np.zeros(ndim)
-        if pos[1] >= 5.0:
-            if not self.car_incor:
-                self.velocity = [1, 0.] # Cambiar 10 por velocidad a la cual se tiene que disminuir
-                self.car_incor = True
+                    
             if nbs_len > 0:
                 if self.velocity[0] > 0.0:
-                    self.velocity =  [0, 0]   
-                else:
-                    v1 = np.zeros(ndim)
-            else:
-                if self.velocity[0] < 1.0:
-                    v1 = np.array([1.0, 0.])
-                else:
-                    v1 = np.zeros(ndim)
-        else:
-            if nbs_len > 0:
-                if self.velocity[0] > 0.0:
+
+                    #Si la cantidad de vecinos es mayor a 0 y se esta avanzando, detente
+
                     self.velocity =   [0, 0]   
             else:
-                if self.velocity[0] < 10.0:
-                    self.velocity =   [1.0, 0.1]  
+                
+                if self.velocity[0] < 1.0:
+
+                    #Si la cantidad de vecinos es igual a 0 y no se esta avanzando, avanza
+
+                    v1 = np.array([1, 0.])
+
+            #Se realiza la suma para ajustar el vector al tipo de dato necesario para la normalization
+
+            self.velocity += v1
+            if pos[0] < 30:
+
+                #Si se encuentra dentro del area del VSL, ajustar por la variable "velocidadFuzzy"
+
+                self.velocity = (normalization(self.velocity)+normalization(self.velocity)*self.error)*velocidadFuzzy
+            else:
+
+                #Si no, continua normal, donde normal es la normalization de velocidades ajustada por el posible error
+
+                self.velocity = (normalization(self.velocity)+normalization(self.velocity)*self.error)
 
 
-        self.velocity += v1
-        self.velocity = normalization(self.velocity)+normalization(self.velocity)*self.error
+    def update_position(self, t):
 
-        if pos[0] > 99:
-            self.velocity = [1,0]
-        
-    def update_position(self):
+        #Se realiza el desplazamiento en base a la velocidad normalizada
 
         self.space.move_by(self, self.velocity)
-        if self.pos[1]>=5.0:
-            self.pos[1]=5.0
-            #del self.space.positions[self]
-        
 
-class TrafficFlowModel(ap.Model):
-    
+        #Se guardan los valores de posicion nuevas, asi como el paso correspondiente
+
+        self.x = self.pos[0]
+        self.y = self.pos[1]
+        self.time = t
+        if self.x<=100 and self.id != 2 and self.id != 3:
+
+            #Si no se ha desplazado a mas alla del area visible, guardar los datos de posicion actual
+
+            self.record(["time","id", "x", "y"])
+
+
+class CarIncor(ap.Agent):
+
+    #Agente en la incorporacion y luego autopista
 
     def setup(self):
-        """ Initializes the agents and network of the model. """
 
+        #Velocidad inicial con movimiento a X positiva y Y positiva menor
+
+        self.velocity =  [1.0, 0.1] 
+
+        #Revision aleatoria para la generacion de error de velocidad
+
+        self.random = self.model.random
+        self.group = self.random.choice(range(100))
+        if self.group < self.p.problemas:
+            self.error = ((self.random.choice(range(self.p.intensidad_problemas))-self.p.intensidad_problemas/2)/self.p.intensidad_problemas)
+        else:
+            self.error = 0
+
+        #Declaracion de que el agente no es de la incorporacion
+
+        self.isIncor = True
+
+    def setup_pos(self, space):
+
+        #Iniciacion en las posiciones iniciales
+
+        self.space = space
+        self.neighbors = space.neighbors
+        self.pos = space.positions[self]
+        
+    def update_velocity(self, velocidadFuzzy):
+
+        #Metodo para la declaracion de velocidad
+
+        #Simplificacion de variable de posicion
+
+        pos = self.pos
+
+        #Revision de si esta por salirse del mapa
+
+        if pos[0] > 99:
+
+            #Si si, continuar con velocidad constante
+
+            self.velocity = [1,0]
+        else:
+
+            #Si no, iniciar proceso de toma de decision de velocidad
+
+            #Simplificacion de variable del parametro de numero de dimensiones
+
+            ndim = self.p.ndim
+
+            #Revision de agentes dentro del radio "outer_radiusX"
+
+            nbs = self.neighbors(self, distance=self.p.outer_radiusX)
+
+            # Inicializacion de variable para contar vecinos
+
+            nbs_len = 0
+
+            #Corrimiento de todos los agentes que son vecinos en su radio para revisar cuales estan enfrente
+
+            for nbs_pos_array in nbs:
+                isIncor = nbs_pos_array.isIncor
+
+                #Se almacena si el vecino es de la incorporacion o no
+
+                nbs_check = np.array(nbs_pos_array.pos)
+                if pos[1] >= 5.0:
+
+                    #Si el vehiculo esta en la autopista entonces se realiza un mismo proceso de revision de vecinos
+
+                    if (nbs_check[0] -  pos[0]  > -1 and nbs_check[0] -  pos[0]  < self.p.outer_radiusX ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
+                        nbs_len += 1
+                else:
+                    if isIncor:
+                        #Si el vehiculo esta en la incorporacion entonces se realiza dos proceso con cajas de distintos tamanos, el mas chico siendo si son de la incorporacion
+
+                        if (nbs_check[0] -  pos[0]  > 0 and nbs_check[0] -  pos[0]  < self.p.outer_radiusX ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
+                            nbs_len += 1
+                    else:
+                        if (nbs_check[0] -  pos[0]  > 0.5 and nbs_check[0] -  pos[0]  < self.p.outer_radiusX ) and (nbs_check[1] -  pos[1]  > -1 and nbs_check[1] -  pos[1]  < 1 ) :
+                            nbs_len += 1
+
+            #Declaracion de v1 como un vector de 0s de ndim dimensiones
+
+            v1 = np.zeros(ndim)
+            
+            if pos[1] >= 5.0:
+
+                #Se revisa si el agente esta en la autopista
+
+                if not self.isIncor:
+
+                    #Si se acaba de incorporar a la autopista pero no se ha cambiado la identificacion
+                    #Se ajusta la velocidad y se declara como parte de la autopista
+
+                    self.velocity = [1, 0.] 
+                    self.isIncor = False
+                if nbs_len > 0:
+
+                    #Si la cantidad de vecinos es mayor a 0 y se esta avanzando, detente
+
+
+                    if self.velocity[0] > 0.0:
+                        self.velocity =  [0, 0]   
+                else:
+
+                    #Si la cantidad de vecinos es igual a 0 y no se esta avanzando, avanza
+
+
+                    if self.velocity[0] < 1.0:
+                        v1 = np.array([1.0, 0.])
+
+                #Se realiza la suma para ajustar el vector al tipo de dato necesario para la normalization
+
+                self.velocity += v1
+
+                #Y se implementa la normalization de velocidades ajustada por el posible error para la velocidad
+
+                self.velocity = (normalization(self.velocity)+normalization(self.velocity)*self.error)
+            else:
+
+                #Si todavia es parte de la incorporacion
+
+                if nbs_len > 0:
+                    if self.velocity[0] > 0.0:
+
+                        #Si la cantidad de vecinos es mayor a 0 y se esta avanzando, detente
+
+                        self.velocity =   [0, 0]   
+                else:
+                    if self.velocity[0] < 1.0:
+
+                        #Si la cantidad de vecinos es igual a 0 y no se esta avanzando, avanza en diagonal
+
+                        self.velocity =   [1.0, 0.1]  
+
+                #Se realiza la suma para ajustar el vector al tipo de dato necesario para la normalization
+
+                self.velocity += v1
+
+                #Se normaliza la velocidad junto con el error y se ajusta en base a la diferencia que se pide con la autopista.
+
+                self.velocity = (normalization(self.velocity)+normalization(self.velocity)*self.error)*((100-self.p.velocidad_diferencia)/100)
+
+    def update_position(self, t):
+
+        #Se realiza el desplazamiento en base a la velocidad normalizada
+
+        self.space.move_by(self, self.velocity)
+
+        #Si se reliza el ajuste y se sobrepasa la posicion, se incorpora a la autopista
+
+        if self.pos[1]>=5.0:
+            self.pos[1]=5.0
+
+        #Se guardan los valores de posicion nuevas, asi como el paso correspondiente
+
+        self.x = self.pos[0]
+        self.y = self.pos[1]
+        self.time = t
+
+        if self.x<=100 and self.id != 3 and self.id != 2 :
+
+            #Si no se ha desplazado a mas alla del area visible, guardar los datos de posicion actual
+
+            self.record(["time","id", "x", "y"])
+
+        
+class TrafficFlowModel(ap.Model):
+
+    #Clase para la construccion y mantenimiento del ambiente
+
+    def setup(self):
 
         if self.p.cars_pos:
-            # Initialize model with existing car positions
-            self.space = ap.Space(self, shape=[self.p.size_x + self.p.outer_radius+5, self.p.size_y])
+
+            #Se inicializa el espacio con las dimensiones adicionales para que se salgan los agentes una vez completados sus trayectos.
+
+            self.space = ap.Space(self, shape=[self.p.sizeX+self.p.outer_radiusX+5,self.p.sizeY])
+
+            #Se inicializa la lista de agentes de tanto autopista e incorporacion inciales.
+
             self.agents = ap.AgentDList(self, self.p.population, Car)
-            self.agentsIncor = ap.AgentDList(self, self.p.population_merge, CarIncor)
-            self.space.add_agents(self.agents, self.p.cars_pos, random=False)
-            self.space.add_agents(self.agentsIncor, self.p.cars_pos_merge, random=False)
+            self.agentsIncor = ap.AgentDList(self, self.p.populationIncor, CarIncor)
+
+            #Se agregan los agentes a la lista de agentes de tanto autopista e incorporacion inciales.
+
+            self.space.add_agents(self.agents,self.p.cars_pos, random=False)
+            self.space.add_agents(self.agentsIncor,self.p.cars_posIncor, random=False)
+
+            #Se inicializa las posiciones de la lista de agentes de tanto autopista e incorporacion inciales.
+
             self.agents.setup_pos(self.space)
             self.agentsIncor.setup_pos(self.space)
+
+            #Se agrega la variable correspondiente indicando que aun no se han agregado carros nuevos.
+    
             self.carrosNew = False
-            self.carrosNewPop = 0
+
+            #Se inicializa la lista de los agentes aleatorios que se van a agregar
+
             self.carrosNewList = []
 
+            #Se inicializa la lista de los agentes aleatorios que se van a agregar
+            
+            self.velocidadFuzzy = 1
+            
+
+        else:
+            pass
 
     def step(self):
+        self.stop
 
-        # Update velocity and position for cars in every step
+        # Se actualiza la velocidad de los agentes de autopista y la incorporacion
 
-        self.agents.update_velocity()  # Adjust direction
-        self.agentsIncor.update_velocity() 
-        self.agents.update_position()  # Move into new direction
-        self.agentsIncor.update_position() 
-        if self.carrosNew:
-            for agentNew in self.carrosNewList:
-                agentNew.update_velocity() 
-                agentNew.update_position() 
+        self.agents.update_velocity(self.velocidadFuzzy) 
+        self.agentsIncor.update_velocity(self.velocidadFuzzy) 
+
+        # Se actualiza la posicion de los agentes de autopista y la incorporacion
+
+        self.agents.update_position(self.t)  
+        self.agentsIncor.update_position(self.t) 
         
-        #self.remove_agent(self.agentsIncor)
-        print(f"Iteracion t={self.t}")
-        if self.t % 5 == 0 and self.t != 0:
+        # Se realiza un proceso en donde cada cierto numero de steps existe la posibilidad de agregar un nuevo agente a la autopista
+        
+        if self.t % self.p.frecuencia == 0 and self.t != 0:
+
+            #Se genera un numero aleatorio entre 1 y 100
+
             generacion = self.random.choice(range(100))
-            if generacion < self.p.density:
+            if generacion < self.p.densidad:
+
+                #Si el numero esta dentro de la densidad se inicia un proceso de revisar si existe un agente en el area de generacion
+
                 carrosEnInicio = 0
+
+                #Se revisa si alguno de los agentes iniciales
+
                 for agent in self.agents:
-                    if (agent.pos[0]  < self.p.outer_radius+1 ) :
+                    if (agent.pos[0]  < self.p.outer_radiusX+1 ) :
                         carrosEnInicio += 1
+                
+                #Se revisa si alguno de los agentes aleatrios si se generaron
+
                 if self.carrosNew:
                     for carros in self.carrosNewList:
                         for agent in carros:
-                            if (agent.pos[0]  < self.p.outer_radius+1 ) :
+                            if (agent.pos[0]  < self.p.outer_radiusX+1 ) :
                                 carrosEnInicio += 1
+
+                #Si no hay vehiculos en el area de inicio y ya se inicializo la lista de agentes
+
                 if carrosEnInicio == 0 and self.carrosNew:
+                    
+                    #Se inicializa la lista de agentes.
+
                     self.carrosNewList.append(ap.AgentDList(self, 1, Car))
-                    self.space.add_agents(self.carrosNewList[len(self.carrosNewList)-1],[np.array([1, 5.])], random=False)
+
+                    #Se agrega con la posicion de inicio.
+
+                    self.space.add_agents(self.carrosNewList[len(self.carrosNewList)-1],[np.array([0, 5.])], random=False)
+
+                    #Se inicializa en el espacio.
+
                     self.carrosNewList[len(self.carrosNewList)-1].setup_pos(self.space)
                 elif carrosEnInicio == 0:
+
+                    #Si no hay vehiculos en el area de inicio y no se inicializo la lista de agentes
+
+                    #Se inicializa la lista de agentes.
+
                     self.carrosNewList.append(ap.AgentDList(self, 1, Car))
-                    self.space.add_agents(self.carrosNewList[0],[np.array([1, 5.])], random=False)
+
+                    #Se agrega con la posicion de inicio.
+
+                    self.space.add_agents(self.carrosNewList[0],[np.array([0, 5.])], random=False)
+
+                    #Se inicializa en el espacio.
+
                     self.carrosNewList[0].setup_pos(self.space)
+
+                    #Se cambia a ya inicializado la lista de agentes
+
                     self.carrosNew = True
 
+        # Se realiza un proceso en donde cada cierto numero de steps existe la posibilidad de agregar un nuevo agente a la incorporacion
         
-        if self.t % 5 == 0 and self.t != 0:
+        if self.t % self.p.frecuencia == 0 and self.t != 0:
+
+            #Se genera un numero aleatorio entre 1 y 100
+
             generacion = self.random.choice(range(100))
-            if generacion < self.p.density_merge:
+            if generacion < self.p.densidad_incor:
+
+                #Si el numero esta dentro de la densidad se inicia un proceso de revisar si existe un agente en el area de generacion
+
                 carrosEnInicio = 0
-                for agent in self.agents:
-                    if (agent.pos[0]  < self.p.outer_radius+21 and agent.pos[0]  > 18 ) and (agent.pos[1]  < 4 and agent.pos[1]  > 0 ) :
+
+                #Se revisa si alguno de los agentes iniciales
+
+                for agent in self.agentsIncor:
+                    if (agent.pos[0]  < self.p.outer_radiusX+21 and agent.pos[0]  > 18 ) and (agent.pos[1]  < 3 and agent.pos[1]  > 0 ) :
                         carrosEnInicio += 1
+
+                #Se revisa si alguno de los agentes aleatrios si se generaron
+
                 if self.carrosNew:
                     for carros in self.carrosNewList:
                         for agent in carros:
-                            if (agent.pos[0]  < self.p.outer_radius+21 and agent.pos[0]  > 18 ) and (agent.pos[1]  < 4 and agent.pos[1]  > 0 ) :
+                            if (agent.pos[0]  < self.p.outer_radiusX+21 and agent.pos[0]  > 18 ) and (agent.pos[1]  < 3 and agent.pos[1]  > 0 ) :
                                 carrosEnInicio += 1
+
+                #Si no hay vehiculos en el area de inicio y ya se inicializo la lista de agentes
+
                 if carrosEnInicio == 0 and self.carrosNew:
+
+                    #Se inicializa la lista de agentes.
+
                     self.carrosNewList.append(ap.AgentDList(self, 1, CarIncor))
+
+                    #Se agrega con la posicion de inicio.
+
                     self.space.add_agents(self.carrosNewList[len(self.carrosNewList)-1],[np.array([20, 2.])], random=False)
+
+                    #Se inicializa en el espacio.
+
                     self.carrosNewList[len(self.carrosNewList)-1].setup_pos(self.space)
                 elif carrosEnInicio == 0:
+
+                    #Si no hay vehiculos en el area de inicio y no se inicializo la lista de agentes
+
+                    #Se inicializa la lista de agentes.
+
                     self.carrosNewList.append(ap.AgentDList(self, 1, CarIncor))
+
+                    #Se agrega con la posicion de inicio.
+
                     self.space.add_agents(self.carrosNewList[0],[np.array([20, 2.])], random=False)
+
+                    #Se inicializa en el espacio.
+
                     self.carrosNewList[0].setup_pos(self.space)
+
+                    #Se cambia a ya inicializado la lista de agentes
+
                     self.carrosNew = True
-                    self.model.random
-    
+
+        if self.carrosNew:
+
+            #Se revisa si se ha inicializado la lista de agentes aleatorios
+
+            #Si si, se itera a travez de toda la lista para actualizar la velocidad y posicion
+
+            for agentNew in self.carrosNewList:
+                agentNew.update_velocity(self.velocidadFuzzy) 
+                agentNew.update_position(self.t) 
+
+        #Finalmente se realiza un proceso en donde cada cierto numero de steps se actualiza la variable "velocidadFuzzy"
+
+        if self.t % self.p.frecuencia == 0 and self.t != 0:
+            carrosFuzzy = 0
+            carrosFuzzyVelocidad = 0 
+
+            #Primero se itera en las 3 listas de agentes y se revisa si alguno esta dentro del area de cuello de botella.
+            #Si cualquier agente esta dentro del area se suma uno a "carrosFuzzy" y se suma su velocidad a "carrosFuzzyVelocidad".
+
+            for agent in self.agents:
+                if (agent.pos[0]  < 70 and agent.pos[0]  > 30 ) and (agent.pos[1]  == 5 ) :
+                    carrosFuzzy += 1
+                    carrosFuzzyVelocidad += agent.velocity[0]
+            for agent in self.agentsIncor:
+                if (agent.pos[0]  < 70 and agent.pos[0]  > 30 ) and (agent.pos[1]  == 5 ) :
+                    carrosFuzzy += 1
+                    carrosFuzzyVelocidad += agent.velocity[0]
+            if self.carrosNew:
+                for carros in self.carrosNewList:
+                    for agent in carros:
+                        if (agent.pos[0]  < 70 and agent.pos[0]  > 30 ) and (agent.pos[1]  == 5 ) :
+                            carrosFuzzy += 1
+                            carrosFuzzyVelocidad += agent.velocity[0]
+            if carrosFuzzy == 0:
+
+                #Si no existen vehiculos, la velocidad se queda igual.
+
+                self.velocidadFuzzy = 1
+            elif carrosFuzzy < 40/ (self.p.outer_radiusX*3):
+
+                #Si la cantidad de vehiculos detecta es menor a la distancia entre 3 veces el radio de detection, la velocidad se queda igual.
+
+                self.velocidadFuzzy = 1
+            else:
+                if carrosFuzzyVelocidad/carrosFuzzy > 0.8:
+
+                    #Si la velocidad promedio es mayor a 0.8, la velocidad se queda igual.
+
+                    self.velocidadFuzzy = 1
+                elif carrosFuzzyVelocidad/carrosFuzzy > 0.6:
+
+                    #Si la velocidad promedio es menor a 0.8 pero mayor a 0.6, la velocidad se reduce a 0.8 su valor original.
+
+                    self.velocidadFuzzy = 0.8
+                elif carrosFuzzyVelocidad/carrosFuzzy > 0.4:
+
+                    #Si la velocidad promedio es menor a 0.6 pero mayor a 0.4, la velocidad se reduce a 0.6 su valor original.
+
+                    self.velocidadFuzzy = 0.6
+                else:
+
+                    #Si la velocidad promedio es menor a 0.4 , la velocidad se reduce a 0.4 su valor original.
+
+                    self.velocidadFuzzy = 0.4
+
+
