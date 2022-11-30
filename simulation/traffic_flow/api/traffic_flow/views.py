@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body
 
 from .schemas import TrafficParams, StepRead
+from .services import run_traffic_model
 
 from models.traffic_flow import TrafficFlowModel
 
@@ -8,15 +9,12 @@ router = APIRouter()
 
 @router.post(
     "", 
-    # response_model=list[StepRead]
+    response_model=list[StepRead]
 )
-async def get_traffic_model(traffic_params: TrafficParams = Body(...)):
+async def get_traffic_model(traffic_params: TrafficParams = Body(...)) -> list[StepRead]:
 
-    # model = TrafficFlowModel(traffic_params.dict())
-    # results = model.run()
 
-    # # print(results.record)
-    # return results.arrange()
+    # return run_traffic_model(traffic_params=traffic_params)
 
     return [
             {

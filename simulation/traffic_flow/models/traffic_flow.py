@@ -233,16 +233,4 @@ class TrafficFlowModel(ap.Model):
                     self.carrosNewList[0].setup_pos(self.space)
                     self.carrosNew = True
                     self.model.random
-
     
-
-
-        # Check if any of the cars have a car nearby. If so, update agent.close_car to True
-
-        # Update VSL value depending on density of cars in one specific area in grid.
-
-    
-
-    def calculate_VSL(self):
-        # Calculate VSL inside a specific range
-        pass
