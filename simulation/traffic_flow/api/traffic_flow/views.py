@@ -45,48 +45,6 @@ async def get_traffic_info() -> list[CarRead]:
         },
     ]
 
-    return [
-            {
-                "step": 1,
-                "cars": [    
-                    {
-                        "id": 1,
-                        "pos_x": 2,
-                        "pos_y": 2,
-                    },
-                    {
-                        "id": 2,
-                        "pos_x": 4,
-                        "pos_y": 2,
-                    },
-                    {
-                        "id": 3,
-                        "pos_x": 5,
-                        "pos_y": 2,
-                    },
-                ],
-            },
-            {
-                "step": 2,
-                "cars": [    
-                    {
-                        "id": 1,
-                        "pos_x": 2,
-                        "pos_y": 2,
-                    },
-                    {
-                        "id": 2,
-                        "pos_x": 5,
-                        "pos_y": 2,
-                    },
-                    {
-                        "id": 3,
-                        "pos_x": 6,
-                        "pos_y": 2,
-                    },
-                ]
-            }
-        ]
 
 
 @router.post(
@@ -96,7 +54,7 @@ async def get_traffic_info() -> list[CarRead]:
 async def get_traffic_model(traffic_params: TrafficParams = Body(...)) -> list[CarRead]:
 
 
-    # return run_traffic_model(traffic_params=traffic_params)
+    return run_model(traffic_params=traffic_params)
 
     return [
         {

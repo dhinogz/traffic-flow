@@ -1,6 +1,7 @@
 import numpy as np
+import pandas as pd
 
-from .schemas import CarRead, TrafficParams
+from .schemas import CarRead, PositionRead, TrafficParams
 
 
 
@@ -12,7 +13,29 @@ def normalization(v):
 
 
 def parse_model_results(results) -> list[CarRead]:
-    pass
+    
+    df = pd.concat([results["variables"]["Car"], results["variables"]["CarIncor"]]).sort_values(by=['id', "t"])
+
+    groups = df.groupby("id").agg(lambda x: list(x))
+
+    cars = []
+    for i in range(len(groups)):
+        
+        car_id = groups.iloc[i].name
+        steps = groups.iloc[i]["time"]
+        pos_x = groups.iloc[i]["x"]
+        pos_y = groups.iloc[i]["y"]
+
+        positions = []
+        for step, x, y in zip(steps, pos_x, pos_y):
+            position = PositionRead(step=step, pos_x=x, pos_y=y)
+            positions.append(position)
+        
+        car_read = CarRead(car_id=car_id, positions=positions)
+
+        cars.append(car_read)
+
+    return cars
 
 
 def run_model(traffic_params: TrafficParams) -> list[CarRead]:
@@ -32,10 +55,8 @@ def run_model(traffic_params: TrafficParams) -> list[CarRead]:
 
     model = TrafficFlowModel(parameters)
 
-    res = model.run()
+    results = model.run()
 
-    # pandas.concat([results["variables"]["Car"], results["variables"]["CarIncor"]]).sort_values(by=['id', "t"])
-
-    return parse_model_results(res)
+    return parse_model_results(results)
 
     

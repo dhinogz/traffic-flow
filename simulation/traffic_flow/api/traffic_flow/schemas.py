@@ -1,9 +1,4 @@
-
 from pydantic import BaseModel
-
-
-from pydantic import BaseModel
-
 
 
 class PositionRead(BaseModel):
@@ -12,10 +7,8 @@ class PositionRead(BaseModel):
     pos_y: float
 
 class CarRead(BaseModel):
-    id: int
+    car_id: int
     positions: list[PositionRead]
-
-
 
 
 class TrafficParams(BaseModel):
