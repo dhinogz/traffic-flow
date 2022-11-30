@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
 
 from .schemas import TrafficParams, CarRead
-from .services import run_model
+from .services import run_model, run_constant_model
 
 router = APIRouter()
 
@@ -11,6 +11,8 @@ router = APIRouter()
     response_model=list[CarRead],
 )
 async def get_traffic_info() -> list[CarRead]:
+
+    return run_constant_model()
 
     return [
         {
