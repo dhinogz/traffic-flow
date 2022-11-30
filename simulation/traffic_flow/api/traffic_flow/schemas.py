@@ -1,9 +1,7 @@
 
 from pydantic import BaseModel
 
-
-from pydantic import BaseModel
-
+from typing import Optional
 
 class CarRead(BaseModel):
     id: int
@@ -23,19 +21,19 @@ class CarPositionCreate(BaseModel):
 
 class TrafficParams(BaseModel):
 
-    size_x: int
-    size_y: int
-    seed: int
-    steps: int
-    ndim: int
-    population: int
-    population_merge: int
-    inner_radius: int
-    outer_radius: int
-    problems: int
-    problem_intensity: int
-    density: int
-    density_merge: int
+    size_x: Optional[int]
+    size_y: Optional[int]
+    seed: Optional[int]
+    steps: Optional[int]
+    ndim: Optional[int]
+    population: Optional[int]
+    population_merge: Optional[int]
+    inner_radius: Optional[int]
+    outer_radius: Optional[int]
+    problems: Optional[int]
+    problem_intensity: Optional[int]
+    density: Optional[int]
+    density_merge: Optional[int]
 
     class Config:
         schema_extra = {

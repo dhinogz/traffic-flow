@@ -15,6 +15,8 @@ async def get_traffic_model(traffic_params: TrafficParams = Body(...)) -> list[S
 
     print(traffic_params.dict())
 
+    
+
     # return run_model(traffic_params=traffic_params)
 
     return [
