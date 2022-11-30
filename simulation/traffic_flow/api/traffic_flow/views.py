@@ -1,16 +1,60 @@
 from fastapi import APIRouter, Body
 
-from .schemas import TrafficParams
+from .schemas import TrafficParams, StepRead
+from .services import run_traffic_model
 
-from models.traffic_flow import TrafficFlow
+from models.traffic_flow import TrafficFlowModel
 
 router = APIRouter()
 
-@router.post("")
-async def get_traffic_model(traffic_params: TrafficParams = Body(...)):
+@router.post(
+    "", 
+    response_model=list[StepRead]
+)
+async def get_traffic_model(traffic_params: TrafficParams = Body(...)) -> list[StepRead]:
 
-    model = TrafficFlow(traffic_params.dict())
-    results = model.run()
 
-    # print(results.record)
-    return results.arrange()
+    # return run_traffic_model(traffic_params=traffic_params)
+
+    return [
+            {
+                "step": 1,
+                "cars": [    
+                    {
+                        "id": 1,
+                        "pos_x": 2,
+                        "pos_y": 2,
+                    },
+                    {
+                        "id": 2,
+                        "pos_x": 4,
+                        "pos_y": 2,
+                    },
+                    {
+                        "id": 3,
+                        "pos_x": 5,
+                        "pos_y": 2,
+                    },
+                ],
+            },
+            {
+                "step": 2,
+                "cars": [    
+                    {
+                        "id": 1,
+                        "pos_x": 2,
+                        "pos_y": 2,
+                    },
+                    {
+                        "id": 2,
+                        "pos_x": 5,
+                        "pos_y": 2,
+                    },
+                    {
+                        "id": 3,
+                        "pos_x": 6,
+                        "pos_y": 2,
+                    },
+                ]
+            }
+        ]
