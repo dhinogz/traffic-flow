@@ -13,6 +13,7 @@ router = APIRouter()
 )
 async def get_traffic_model(traffic_params: TrafficParams = Body(...)) -> list[StepRead]:
 
+    print(traffic_params.dict())
 
     # return run_model(traffic_params=traffic_params)
 
