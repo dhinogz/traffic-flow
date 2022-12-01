@@ -6,6 +6,7 @@ class PositionRead(BaseModel):
     pos_x: float
     pos_y: float
 
+
 class CarRead(BaseModel):
     car_id: int
     positions: list[PositionRead]
@@ -35,4 +36,3 @@ class TrafficParams(BaseModel):
                 "frecuencia": 5,
             }
         }
-

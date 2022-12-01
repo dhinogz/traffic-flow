@@ -5,23 +5,23 @@ import numpy as np
 # Visualization
 import matplotlib.pyplot as plt
 
+
 def normalize(v):
-    """ Normalize a vector to length 1. """
+    """Normalize a vector to length 1."""
     norm = np.linalg.norm(v)
     if norm == 0:
         return v
     return v / norm
 
-    
+
 class Boid(ap.Agent):
-    """ An agent with a position and velocity in a continuous space,
+    """An agent with a position and velocity in a continuous space,
     who follows Craig Reynolds three rules of flocking behavior;
-    plus a fourth rule to avoid the edges of the simulation space. """
+    plus a fourth rule to avoid the edges of the simulation space."""
 
     def setup(self):
 
-        self.velocity = normalize(
-            self.model.nprandom.random(self.p.ndim) - 0.5)
+        self.velocity = normalize(self.model.nprandom.random(self.p.ndim) - 0.5)
 
     def setup_pos(self, space):
 
@@ -88,15 +88,15 @@ class BoidsModel(ap.Model):
     """
 
     def setup(self):
-        """ Initializes the agents and network of the model. """
+        """Initializes the agents and network of the model."""
 
-        self.space = ap.Space(self, shape=[self.p.size]*self.p.ndim)
+        self.space = ap.Space(self, shape=[self.p.size] * self.p.ndim)
         self.agents = ap.AgentList(self, self.p.population, Boid)
         self.space.add_agents(self.agents, random=True)
         self.agents.setup_pos(self.space)
 
     def step(self):
-        """ Defines the models' events per simulation step. """
+        """Defines the models' events per simulation step."""
 
         self.agents.update_velocity()  # Adjust direction
         self.agents.update_position()  # Move into new direction

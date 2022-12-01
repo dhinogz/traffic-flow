@@ -1,13 +1,14 @@
 parameters = {
-    'population': 1000,
-    'infection_chance': 0.3,
-    'recovery_chance': 0.1,
-    'initial_infection_share': 0.1,
-    'number_of_neighbors': 2,
-    'network_randomness': 0.5
+    "population": 1000,
+    "infection_chance": 0.3,
+    "recovery_chance": 0.1,
+    "initial_infection_share": 0.1,
+    "number_of_neighbors": 2,
+    "network_randomness": 0.5,
 }
 
 from pydantic import BaseModel
+
 
 class VirusParams(BaseModel):
 
@@ -21,11 +22,11 @@ class VirusParams(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                'population': 1000,
-                'infection_chance': 0.3,
-                'recovery_chance': 0.1,
-                'initial_infection_share': 0.1,
-                'number_of_neighbors': 2,
-                'network_randomness': 0.5
+                "population": 1000,
+                "infection_chance": 0.3,
+                "recovery_chance": 0.1,
+                "initial_infection_share": 0.1,
+                "number_of_neighbors": 2,
+                "network_randomness": 0.5,
             }
         }

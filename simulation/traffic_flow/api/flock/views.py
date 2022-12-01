@@ -6,6 +6,7 @@ from models.flocking import BoidsModel
 
 router = APIRouter()
 
+
 @router.post("")
 async def get_flocking_model(flock_params: FlockParams = Body(...)):
 

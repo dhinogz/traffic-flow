@@ -19,17 +19,17 @@ class FlockParams(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                'size': 50,
-                'seed': 123,
-                'steps': 200,
-                'ndim': 2,
-                'population': 200,
-                'inner_radius': 3,
-                'outer_radius': 10,
-                'border_distance': 10,
-                'cohesion_strength': 0.005,
-                'seperation_strength': 0.1,
-                'alignment_strength': 0.3,
-                'border_strength': 0.5
+                "size": 50,
+                "seed": 123,
+                "steps": 200,
+                "ndim": 2,
+                "population": 200,
+                "inner_radius": 3,
+                "outer_radius": 10,
+                "border_distance": 10,
+                "cohesion_strength": 0.005,
+                "seperation_strength": 0.1,
+                "alignment_strength": 0.3,
+                "border_strength": 0.5,
             }
         }

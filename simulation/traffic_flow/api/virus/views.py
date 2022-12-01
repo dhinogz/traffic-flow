@@ -10,6 +10,7 @@ from .schemas import VirusParams
 
 router = APIRouter()
 
+
 @router.post("", name="virus-model")
 async def get_virus_model(virus_params: VirusParams = Body(...)):
 
@@ -26,4 +27,3 @@ async def get_virus_model(virus_params: VirusParams = Body(...)):
         plt.close()
 
     return response
-
