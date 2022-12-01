@@ -108,7 +108,7 @@ def run_constant_model():
         "cars_posIncor": [
             np.array([20, 2.0])
         ],  # Constante que corresponde a la posicion inicial de la incorporacion
-        "steps": 300,  # Variable que corresponde a la cantidad de steps que se van a generar
+        "steps": 200,  # Variable que corresponde a la cantidad de steps que se van a generar
         "outer_radiusX": 3,  # Variable que corresponde al radio de detection
         "problemas": 20,  # Variable que corresponde a la probabilidad de que un agente presente problemas
         "intensidad_problemas": 20,  # Variable que corresponde a la intensidad del problema (20 = +-10)
