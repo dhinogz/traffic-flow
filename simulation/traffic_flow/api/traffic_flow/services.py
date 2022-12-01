@@ -12,11 +12,40 @@ def normalization(v):
     return v / norm
 
 
+def add_empty_steps(df):
+        
+    groups = df.groupby("id").agg(lambda x: list(x))
+
+    min_steps = {}
+    for i in range(len(groups)):
+        car_id = groups.iloc[i].name
+        first_step = groups.iloc[i]["time"][0]
+
+        if first_step not in min_steps:
+            min_steps[first_step] = [car_id]
+        else:
+            min_steps[first_step].append(car_id)
+
+
+    for key, value in min_steps.items():
+        for car_id in value:
+            current_step = key - 1
+            while current_step > 0:
+                df.loc[(car_id, current_step),:] = (current_step, car_id, 0, 0)
+                current_step -= 1
+
+    df = df.sort_values(by=['id', "time"])
+
+    groups = df.groupby("id").agg(lambda x: list(x))
+
+    return groups
+
+
+
 def parse_model_results(results) -> list[CarRead]:
     
     df = pd.concat([results["variables"]["Car"], results["variables"]["CarIncor"]]).sort_values(by=['id', "t"])
-
-    groups = df.groupby("id").agg(lambda x: list(x))
+    groups = add_empty_steps(df)
 
     cars = []
     for i in range(len(groups)):
