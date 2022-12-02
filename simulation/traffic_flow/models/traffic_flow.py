@@ -1,7 +1,12 @@
 import agentpy as ap
 import numpy as np
 
-from api.traffic_flow.services import normalization
+
+def normalization(v):
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        return v
+    return v / norm
 
 
 class Car(ap.Agent):

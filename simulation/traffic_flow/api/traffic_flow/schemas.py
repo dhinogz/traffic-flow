@@ -2,17 +2,22 @@ from pydantic import BaseModel
 
 
 class PositionRead(BaseModel):
+    """Position schema used in CarRead"""
+
     step: int
     pos_x: float
     pos_y: float
 
 
 class CarRead(BaseModel):
+    """Response schema for Unity."""
+
     car_id: int
     positions: list[PositionRead]
 
 
 class TrafficParams(BaseModel):
+    """Request parameters schema used in POST."""
 
     steps: int
     outer_radiusX: int
