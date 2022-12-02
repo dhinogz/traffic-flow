@@ -112,8 +112,8 @@ def run_constant_model():
         "outer_radiusX": 8,  # Variable que corresponde al radio de detection
         "problemas": 20,  # Variable que corresponde a la probabilidad de que un agente presente problemas
         "intensidad_problemas": 20,  # Variable que corresponde a la intensidad del problema (20 = +-10)
-        "densidad": 60,  # Variable que corresponde a la probabilidad de que se genere un agente autopista en una frecuencia
-        "densidad_incor": 30,  # Variable que corresponde a la probabilidad de que se genere un agente incorporacion en una frecuencia
+        "densidad": 40,  # Variable que corresponde a la probabilidad de que se genere un agente autopista en una frecuencia
+        "densidad_incor": 15,  # Variable que corresponde a la probabilidad de que se genere un agente incorporacion en una frecuencia
         "velocidad_diferencia": 40,  # Variable que corresponde a la diferencia de velocidad entre la autopista y la incorporacion (1-velocidad_diferencia)
         "frecuencia": 5,  # Variable que corresponde a la frecuencia en la cual se va revisar la generacion de agentes y la velocidadFuzzy
     }
